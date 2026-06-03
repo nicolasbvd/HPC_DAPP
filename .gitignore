@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.vscode/
+.DS_Store
+/*.egg-info/
+
+# Optional large artifacts (uncomment if you prefer to exclude generated files)
+# *.sdfg
+# process_samples.cpp
