@@ -1,6 +1,15 @@
 # DAPP
 **Autheurs**: Nicolas Duprat & Nicolas Bovard
 
+## Présentation
+Ce laboratoire présente l'outil DAPP, developpé à l'ETHZ. Il y a la documentation d'installation et une procédure de test.  
+La procédure compare trois implémentations du même noyau :
+- une version séquentielle ("normal"),
+- une version optimisée avec intrinsics SIMD ("SIMD"),
+- une version générée par DaCe (SDFG, nommée `process_samples_dace`).
+
+**Objectifs** : vérifier la fonctionnalité, comparer latence et efficacité énergétique sur un cœur isolé, et fournir une procédure de test reproductible.
+
 ## Installation
 
 ### 1. Prérequis Système
@@ -33,6 +42,8 @@ pip install dace
 pip install git+https://github.com/spcl/dace.git
 ```
 
+pour tout troubleshooting d'installation ou de gestion de CPU veuillez vous référencez a la [documentation](https://spcldace.readthedocs.io/en/latest/setup/installation.html)
+
 ### 3. Dépendances Optionnelles
 Selon vos besoins, des modules supplémentaires peuvent être ajoutés :
 
@@ -54,72 +65,65 @@ Selon vos besoins, des modules supplémentaires peuvent être ajoutés :
 L'écosystème DaCe inclut une extension visuelle pour VS Code qui permet d'éditer et de transformer les graphes (SDFGs).
 - **Comment installer** : Recherchez l'extension **SDFV** depuis le marketplace VS Code et installez-la.
 
+## Procédure de test
 
-## Tests
+Pour tester l’outil DaCe, nous avons repris le labo 4, dans lequel on compare une implémentation séquentielle et une implémentation SIMD. Nous y avons ajouté une version équivalente générée avec DaCe, appelée `process_samples_dace`. Le code source utilisé pour cette étude est disponible sur notre répo : [HPC_DAPP](https://github.com/nicolasbvd/HPC_DAPP).
 
-Afin de vérifier que l'outil DAPP (DaCe) fonctionne correctement, nous allons comparer un code écrit manuellement en C (avec et sans instuctions SIMD) avec un script équivalent écrit en Python et optimisé par DaCe.
+L’objectif de cette procédure est double : vérifier que l’outil fonctionne correctement, puis comparer les performances et l’efficacité énergétique des trois versions sur un même noyau de calcul.
 
-### 1. Code C natif (Naïf et SIMD)
-Nous utilisons un laboratoire traitant un très grand nombre d'échantillons (`n = 10'000'000`) de vecteurs (x,y,z,b) sur 10 itérations.
+La première étape consiste à décrire le traitement en Python, car DaCe utilise ce langage pour représenter la logique du programme avant transformation. La fonction est annotée avec `@dace.program`, ce qui permet de définir le SDFG.
 
-*Compilation et exécution du code de test :*
-```bash
-cd Labos/Lab04/code/src
-gcc -O3 -march=native exercice.c -o exercice
-./exercice 10000000 1000
-```
-
-```text
-Arrays energy match.
-Arrays score match.
-n = 10000000, repeats = 1000
-Processing time normal total : 8911 ms
-Processing time SIMD total   : 8923 ms
-```
-
-### 2. Le script d'optimisation via DaCe
-Créez le script Python `exercice_dace.py` dans le répertoire courant. Notez l'utilisation explicite de `dace.map` formuler la boucle de manière très proche du C pour éviter les écritures temporaires non optimisées :
-
-```python
-import dace
-import numpy as np
-import time
-
-dace.config.Config.set('compiler', 'cpu', 'args', value='-std=c++14 -O3 -march=native -fPIC')
-
-N = dace.symbol('N')
-
-@dace.program
-def process_samples_dace(x: dace.int32[N], y: dace.int32[N], z: dace.int32[N], b: dace.int32[N], 
-                         energy: dace.int32[N], score: dace.int32[N]):
-    for i in dace.map[0:N]:
-        energy[i] = x[i] * x[i] + y[i] * y[i] + z[i] * z[i]
-        s = (x[i] + y[i] - z[i]) * 3 + b[i] * 5
-        if s < -1000:
-            score[i] = -1000
-        elif s > 1000:
-            score[i] = 1000
-        else:
-            score[i] = s
-```
-
-### 3. Exécution et constatation
-Lancer le script via la commande :
+Ensuite, on génère le SDFG en lançant le script Python du programme que l'on a écrit :
 ```bash
 python3 exercice_dace.py
 ```
 
-*Résultats via DAPP :*
-```text
-n = 10000000, repeats = 1000
-Compiling and running warmup...
-Processing time DaCe total : 8885 ms
-Per run DaCe               : 8.885436 ms
+Cette étape sert aussi de premier test fonctionnel, car DaCe doit réussir à construire le graphe et à préparer la compilation.
+
+La deuxième étape consiste à relier ce SDFG au code C du projet. Pour cela, nous avons ajouté un fichier `dace_api.h` pour faire le lien avec le graphe généré, et `my_sdfg.c` pour encapsuler l’appel à DaCe. L’intégration finale se fait ensuite dans `exercice.c`.
+
+Le projet est ensuite compilé avec CMake :
+
+```bash
+cd build/
+cmake ..
+make
 ```
 
-### 4. Interprétation du Test
-1. **Compilation sous-jacente :** DaCe met quelques secondes au premier appel ("warmup") pour traduire le code Python en un graphe (SDFG) puis le compiler en C++ avec les flags demandés tels que `-O3` et `-march=native`.
-2. **Performance exceptionnelle :** L'exécution du script (8885 ms) est équivalente en tout point au code C/SIMD (8923 ms). Le surcoût Python est complètement éliminé !
-3. **Ergonomie :** Vous obtenez des performances de niveau SIMD sans devoir utiliser de registres AVX (comme `_mm256_loadu_si256`) ni d'avoir à gérer manuellement les alignements mémoires pour les cas où *n* n'est pas multiple de 8. DaCe prend en charge toute cette complexité.
+Le binaire généré est simd_exercice.
 
-Si le script réussit à s'exécuter et produit ces métriques sans erreur, l'installation de DaCe est dûment validée.
+La validation fonctionnelle se fait en lançant :
+
+```bash
+./build/simd_exercice 10000000 1000
+```
+
+### Partie visuelle DaCe
+L’un des intérêts de DaCe est qu’il permet aussi de visualiser le programme sous forme de graphe SDFG. Pour cela, il faut installer l’extension visuelle SDFV dans VS Code, puis ouvrir le fichier SDFG généré par DaCe. Cette visualisation permet d’inspecter la structure du calcul et de vérifier que la transformation produite correspond bien à ce que l’on attend.
+
+Dans notre cas, le graphe doit rester simple :
+
+- les tableaux x, y, z et b apparaissent comme entrées,
+- une map représente la boucle sur i,
+- un tasklet effectue le calcul de energy et score,
+- les tableaux de sortie sont écrits directement,
+- le nombre de temporaires intermédiaires doit rester faible.
+
+L’interprétation du graphe est importante, car elle permet de comprendre les performances obtenues. Un SDFG simple, avec peu de copies mémoire et peu de buffers temporaires, est généralement plus favorable à l’optimisation. À l’inverse, un graphe plus fragmenté peut révéler une transformation moins efficace et donc expliquer une baisse de performance.
+
+[Voir le graphe DaCe en PDF](Annexe/process_samples_dace.pdf)
+
+### Mesure et analyse
+
+Une fois la correction fonctionnelle validée, on passe aux mesures de performance et d’énergie. L’objectif n’est pas seulement de comparer des temps, mais aussi de comprendre dans quelles conditions DaCe est compétitif et ce que révèlent les compteurs matériels sur le comportement du programme.
+
+Les mesures mono-threadées constituent la référence la plus juste pour comparer les trois implémentations. On évite ainsi que DaCe profite d’un parallélisme différent de celui des autres versions. Dans ce cadre, la version SIMD reste la plus rapide, la version séquentielle est légèrement derrière, et la version SDFG est plus lente. Les résultats observés dans `valeur.md` montrent typiquement un ordre de grandeur d’environ 12 à 13 ms pour les versions séquentielle et SIMD, contre environ 21 à 22 ms pour la version SDFG.
+
+Dans le fichier `valeurs.md`, les tests sont divisés en 2 groupes: Le groupe `HPC` permet d’analyser les performances du programme, notamment le temps d’exécution, le nombre d’instructions et la bande passante mémoire. Le groupe `ENERGY` mesure la consommation et la puissance du processeur pendant l’exécution.
+
+Les mesures LIKWID confirment cette tendance. Avec le groupe `HPC`, la version SIMD atteint une bande passante mémoire plus élevée que la version SDFG, alors que le SDFG retire davantage d’instructions pour un temps d’exécution plus long. Avec le groupe `ENERGY`, on observe également que la consommation package de la version SDFG est plus importante que celle de SIMD, ce qui est cohérent avec son runtime supérieur. Autrement dit, dans cette configuration, le SDFG n’apporte pas le meilleur compromis performance/énergie.
+
+Les essais avec `-march=native` montrent enfin un point important d’interprétation : le compilateur C peut déjà optimiser fortement le noyau de départ, ce qui réduit l’écart entre la version séquentielle et la version SIMD. Dans certaines configurations, la version SDFG se rapproche davantage du SIMD lorsque le parallélisme n’est pas bridé, mais en mono-thread elle reste globalement plus coûteuse. Cela signifie que DaCe fournit bien un modèle de calcul correct et exploitable, mais que ses performances dépendent fortement du niveau d’optimisation choisi, du nombre de threads et de la façon dont le graphe est généré.
+
+En résumé, les résultats valident le bon fonctionnement de l’outil, montrent que la version SIMD manuelle reste la plus efficace dans notre configuration de référence, et mettent en évidence l’intérêt principal de DaCe : la lisibilité du graphe SDFG, la possibilité d’inspecter la transformation produite et la capacité à générer automatiquement un code correct à partir d’une description Python.
+
