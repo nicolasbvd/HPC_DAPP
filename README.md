@@ -60,3 +60,5 @@ dépannage rapide
 - Si la compilation ou le link échoue sur les symboles `process_samples_sdfg_*` : assurez-vous que `.dacecache/process_samples_dace/build/libprocess_samples_dace.so` existe et que `CMakeLists.txt` inclut le chemin vers `.dacecache/.../include` et link la lib.
 - Si le script DaCe génère des chemins absolus erronés, supprimez le dossier `.dacecache/process_samples_dace/build` et regénérez avec `python3 src/exercice_dace.py`.
 
+# Présentation
+La présentation est présente dans le dossier reveal.js, il suffit juste de télécherger les dépendances a l'aide de `npm install` et ensuite de le lancer a l'aide de `npm start`.

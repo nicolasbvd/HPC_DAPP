@@ -3,7 +3,7 @@ import numpy as np
 import time
 
 # Forcer les flags de compilation C++ en arrière-plan pour être 100% équitable
-dace.config.Config.set('compiler', 'cpu', 'args', value='-std=c++14 -O0 -fPIC')
+dace.config.Config.set('compiler', 'cpu', 'args', value='-std=c++14 -O3 -march=native -fPIC')
 
 # Define variables for Dace (N is our array size)
 N = dace.symbol('N')

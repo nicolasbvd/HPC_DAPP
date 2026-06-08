@@ -10,69 +10,67 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/theme/black.min.css" />
   <style>
     :root {
-      --accent: #00ffe0;
-      --accent2: #ff4d6d;
-      --bg: #080c10;
-      --surface: #0d1520;
-      --surface2: #111c2e;
-      --text: #e8edf5;
-      --muted: #5a7080;
+      --accent: #0066cc;
+      --accent2: #e03050;
+      --bg: #f5f7fa;
+      --surface: #ffffff;
+      --surface2: #eef1f6;
+      --text: #1a2233;
+      --muted: #8a96a8;
       --mono: 'Space Mono', monospace;
       --sans: 'Syne', sans-serif;
     }
-
+ 
     .reveal-viewport { background: var(--bg); }
-
+ 
     .reveal {
       font-family: var(--sans);
       font-size: 36px;
       color: var(--text);
     }
-
-    /* Grid background */
+ 
+    /* Subtle dot grid */
     .reveal .slides {
-      background-image:
-        linear-gradient(rgba(0,255,224,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,255,224,0.03) 1px, transparent 1px);
-      background-size: 40px 40px;
+      background-image: radial-gradient(circle, rgba(0,102,204,0.08) 1px, transparent 1px);
+      background-size: 32px 32px;
     }
-
+ 
     .reveal h1, .reveal h2, .reveal h3 {
       font-family: var(--sans);
-      font-weight: 800;
+      font-weight: 700;
       text-transform: none;
-      letter-spacing: -0.02em;
+      letter-spacing: normal;
       color: var(--text);
       text-shadow: none;
     }
-
+ 
     .reveal h1 { font-size: 2.8em; line-height: 1.05; }
     .reveal h2 { font-size: 1.6em; color: var(--accent); margin-bottom: 0.6em; }
     .reveal h3 { font-size: 1.1em; color: var(--accent2); font-weight: 700; }
-
-    .reveal p, .reveal li { font-size: 0.72em; line-height: 1.7; color: #c5d0dc; }
+ 
+    .reveal p, .reveal li { font-size: 0.72em; line-height: 1.7; color: #3a4a60; }
     .reveal ul { list-style: none; padding: 0; margin: 0; }
     .reveal ul li::before { content: "→ "; color: var(--accent); font-family: var(--mono); }
-
+ 
     .reveal code {
       font-family: var(--mono);
       background: var(--surface2);
-      border: 1px solid rgba(0,255,224,0.15);
+      border: 1px solid rgba(0,102,204,0.18);
       color: var(--accent);
       padding: 0.1em 0.4em;
       border-radius: 3px;
       font-size: 0.85em;
     }
-
+ 
     .reveal pre {
-      background: var(--surface);
-      border: 1px solid rgba(0,255,224,0.12);
+      background: #1e2a3a;
+      border: 1px solid rgba(0,102,204,0.15);
       border-left: 3px solid var(--accent);
-      border-radius: 4px;
+      border-radius: 6px;
       padding: 1em 1.2em;
       font-size: 0.55em;
       line-height: 1.6;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.12);
       width: 100%;
       margin: 0.5em auto;
     }
@@ -83,7 +81,7 @@
       color: #a8d8c8;
       font-size: 1em;
     }
-
+ 
     /* Tag pill */
     .tag {
       display: inline-block;
@@ -97,10 +95,10 @@
       text-transform: uppercase;
       vertical-align: middle;
     }
-    .tag-accent  { background: rgba(0,255,224,0.12); color: var(--accent); border: 1px solid rgba(0,255,224,0.3); }
-    .tag-red     { background: rgba(255,77,109,0.12); color: var(--accent2); border: 1px solid rgba(255,77,109,0.3); }
-    .tag-yellow  { background: rgba(255,200,60,0.12); color: #ffc83c; border: 1px solid rgba(255,200,60,0.3); }
-
+    .tag-accent  { background: rgba(0,102,204,0.10); color: var(--accent); border: 1px solid rgba(0,102,204,0.3); }
+    .tag-red     { background: rgba(224,48,80,0.10); color: var(--accent2); border: 1px solid rgba(224,48,80,0.3); }
+    .tag-yellow  { background: rgba(200,130,0,0.10); color: #b07800; border: 1px solid rgba(200,130,0,0.3); }
+ 
     /* Card grid */
     .card-grid {
       display: grid;
@@ -109,15 +107,16 @@
       margin-top: 0.6em;
     }
     .card-grid.three { grid-template-columns: 1fr 1fr 1fr; }
-
+ 
     .card {
       background: var(--surface);
-      border: 1px solid rgba(0,255,224,0.1);
+      border: 1px solid rgba(0,102,204,0.12);
       border-radius: 6px;
       padding: 1em 1.1em;
       text-align: left;
       position: relative;
       overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
     .card::before {
       content: '';
@@ -127,8 +126,8 @@
       background: linear-gradient(90deg, var(--accent), transparent);
     }
     .card h3 { margin: 0 0 0.4em; font-size: 0.65em; }
-    .card p  { margin: 0; font-size: 0.55em; color: #8a9fb0; }
-
+    .card p  { margin: 0; font-size: 0.55em; color: #5a6a80; }
+ 
     /* Divider line */
     .divider {
       width: 60px; height: 3px;
@@ -136,7 +135,7 @@
       margin: 0.4em 0 0.8em;
       border-radius: 2px;
     }
-
+ 
     /* Mono label */
     .mono-label {
       font-family: var(--mono);
@@ -147,10 +146,10 @@
       display: block;
       margin-bottom: 0.3em;
     }
-
+ 
     /* Title slide */
     .title-slide { text-align: left; }
-    .title-slide .big { font-size: 3.2em; line-height: 1; margin: 0; }
+    .title-slide .big { font-size: 3.2em; line-height: 1; margin: 0; letter-spacing: normal; font-weight: 700; }
     .title-slide .big span { color: var(--accent); }
     .title-slide .sub {
       font-family: var(--mono);
@@ -160,7 +159,7 @@
       border-left: 2px solid var(--accent);
       padding-left: 0.8em;
     }
-
+ 
     /* Flow diagram */
     .flow {
       display: flex;
@@ -171,14 +170,15 @@
       flex-wrap: nowrap;
     }
     .flow-box {
-      background: var(--surface2);
-      border: 1px solid rgba(0,255,224,0.2);
+      background: var(--surface);
+      border: 1px solid rgba(0,102,204,0.2);
       border-radius: 4px;
       padding: 0.5em 0.7em;
       font-family: var(--mono);
       font-size: 0.42em;
       color: var(--accent);
       white-space: nowrap;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
     }
     .flow-arrow {
       font-family: var(--mono);
@@ -186,16 +186,17 @@
       color: var(--muted);
       padding: 0 0.3em;
     }
-
+ 
     /* Stat box */
     .stats { display: flex; gap: 16px; margin-top: 0.6em; justify-content: center; }
     .stat {
       background: var(--surface);
-      border: 1px solid rgba(0,255,224,0.1);
+      border: 1px solid rgba(0,102,204,0.12);
       border-radius: 6px;
       padding: 0.8em 1.2em;
       text-align: center;
       flex: 1;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
     .stat .num {
       font-family: var(--mono);
@@ -205,18 +206,18 @@
       display: block;
     }
     .stat .label { font-size: 0.42em; color: var(--muted); }
-
+ 
     /* Progress bar */
     .perf-bar { margin: 0.3em 0; }
-    .perf-bar .bar-label { font-family: var(--mono); font-size: 0.42em; color: #8a9fb0; display: flex; justify-content: space-between; margin-bottom: 0.2em; }
-    .perf-bar .bar-track { background: var(--surface2); border-radius: 2px; height: 10px; overflow: hidden; }
+    .perf-bar .bar-label { font-family: var(--mono); font-size: 0.42em; color: #3a4a60; display: flex; justify-content: space-between; margin-bottom: 0.2em; }
+    .perf-bar .bar-track { background: var(--surface2); border-radius: 2px; height: 10px; overflow: hidden; border: 1px solid rgba(0,0,0,0.06); }
     .perf-bar .bar-fill   { height: 100%; border-radius: 2px; transition: width 1s ease; }
-
+ 
     .reveal .slides section { padding: 30px 50px; }
-
+ 
     /* Slide number */
     .reveal .slide-number { font-family: var(--mono); color: var(--muted); background: none; font-size: 0.35em; }
-
+ 
     /* Footer line on each slide */
     .footer-line {
       position: absolute;
@@ -227,21 +228,21 @@
       font-family: var(--mono);
       font-size: 0.32em;
       color: var(--muted);
-      border-top: 1px solid rgba(0,255,224,0.07);
+      border-top: 1px solid rgba(0,102,204,0.1);
       padding-top: 8px;
     }
-
+ 
     .highlight { color: var(--accent); font-weight: 700; }
     .highlight-red { color: var(--accent2); font-weight: 700; }
-
+ 
     /* Two-col layout */
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
     .two-col.wider { grid-template-columns: 1.3fr 1fr; }
-
+ 
     /* SDFG node diagram */
     .sdfg-diagram {
-      background: var(--surface);
-      border: 1px solid rgba(0,255,224,0.1);
+      background: var(--surface2);
+      border: 1px solid rgba(0,102,204,0.12);
       border-radius: 6px;
       padding: 1em;
       font-family: var(--mono);
@@ -251,8 +252,8 @@
     }
     .sdfg-state {
       display: inline-block;
-      background: rgba(0,255,224,0.08);
-      border: 2px solid rgba(0,255,224,0.4);
+      background: rgba(0,102,204,0.08);
+      border: 2px solid rgba(0,102,204,0.4);
       border-radius: 50%;
       width: 70px; height: 70px;
       line-height: 70px;
@@ -261,12 +262,12 @@
     }
     .sdfg-edge {
       display: inline-block;
-      color: var(--muted);
+      color: #8a96a8;
       vertical-align: middle;
       font-size: 1.4em;
       margin: 0 4px;
     }
-
+ 
     /* Keyword highlight in code */
     .kw { color: #ff9f7f; }
     .fn { color: #79d5f7; }
@@ -356,28 +357,7 @@
     <div class="footer-line"><span>DaCe — Vue d'ensemble</span><span>slide 3</span></div>
   </section>
 
-  <!-- SLIDE 4: POURQUOI DACE -->
-  <section data-transition="slide">
-    <span class="mono-label">motivation</span>
-    <h2>Ce que DaCe apporte</h2>
-    <div class="two-col">
-      <div class="card">
-        <h3>Une représentation exploitable</h3>
-        <p>Le SDFG rend explicites les flux de données, les accès mémoire et les dépendances pour que les optimisations deviennent manipulables.</p>
-      </div>
-      <div class="card">
-        <h3>Des transformations réutilisables</h3>
-        <p>Les mêmes passes peuvent s'appliquer à plusieurs programmes et à plusieurs cibles matérielles sans repartir de zéro.</p>
-      </div>
-    </div>
-    <div class="card" style="margin-top:12px; border-color: rgba(0,255,224,0.2);">
-      <h3 style="color:var(--accent)">En pratique</h3>
-      <p>DaCe sert d'interface entre un code haut niveau et une optimisation proche du niveau expert, sans réécriture complète à chaque architecture.</p>
-    </div>
-    <div class="footer-line"><span>DaCe — Motivation</span><span>slide 4</span></div>
-  </section>
-
-  <!-- SLIDE 5: SDFG -->
+  <!-- SLIDE 4: SDFG -->
   <section data-transition="slide">
     <span class="mono-label">représentation interne</span>
     <h2>Le SDFG</h2>
@@ -410,10 +390,10 @@
         </div>
       </div>
     </div>
-    <div class="footer-line"><span>DaCe — SDFG IR</span><span>slide 5</span></div>
+    <div class="footer-line"><span>DaCe — SDFG IR</span><span>slide 4</span></div>
   </section>
 
-  <!-- SLIDE 6: USAGE PYTHON -->
+  <!-- SLIDE 5: USAGE PYTHON -->
   <section data-transition="slide">
     <span class="mono-label">utilisation</span>
     <h2>DaCe en Python</h2>
@@ -456,10 +436,10 @@ my_kernel(A=A, B=B)</code></pre>
         </div>
       </div>
     </div>
-    <div class="footer-line"><span>DaCe — Python API</span><span>slide 6</span></div>
+    <div class="footer-line"><span>DaCe — Python API</span><span>slide 5</span></div>
   </section>
 
-  <!-- SLIDE 7: INTÉGRATION C -->
+  <!-- SLIDE 6: INTÉGRATION C -->
   <section data-transition="slide">
     <span class="mono-label">intégration</span>
     <h2>Appeler un SDFG depuis C</h2>
@@ -483,31 +463,10 @@ my_kernel(A=A, B=B)</code></pre>
     free(A); free(B);
     <span class="kw">return</span> 0;
 }</code></pre>
-    <div class="footer-line"><span>DaCe — Intégration C/C++</span><span>slide 7</span></div>
+    <div class="footer-line"><span>DaCe — Intégration C/C++</span><span>slide 6</span></div>
   </section>
 
-  <!-- SLIDE 8: 3 FONCTIONS -->
-  <section data-transition="slide">
-    <span class="mono-label">API générée</span>
-    <h2>Les 3 fonctions exportées</h2>
-    <div class="card-grid" style="grid-template-columns:1fr;">
-      <div class="card">
-        <h3><code>__dace_init_&lt;nom&gt;(symboles…)</code></h3>
-        <p>Alloue toutes les structures internes. Ne prend que les <span class="highlight">symboles</span> (pas les tableaux). Retourne un <code>handle</code> opaque.</p>
-      </div>
-      <div class="card" style="margin-top:10px">
-        <h3><code>__program_&lt;nom&gt;(handle, args…, symboles…)</code></h3>
-        <p>Exécute le SDFG. Les arguments sont ordonnés <span class="highlight">alphabétiquement</span>. Le handle est toujours le premier argument.</p>
-      </div>
-      <div class="card" style="margin-top:10px; border-color: rgba(255,77,109,0.2);">
-        <h3 style="color:var(--accent2)"><code>__dace_exit_&lt;nom&gt;(handle)</code></h3>
-        <p>Libère toutes les ressources. Retourne <code>0</code> si succès. À appeler une fois le SDFG terminé.</p>
-      </div>
-    </div>
-    <div class="footer-line"><span>DaCe — API C</span><span>slide 8</span></div>
-  </section>
-
-  <!-- SLIDE 9: TRANSFORMATIONS -->
+  <!-- SLIDE 7: TRANSFORMATIONS -->
   <section data-transition="slide">
     <span class="mono-label">optimisation</span>
     <h2>Transformations de SDFG</h2>
@@ -522,52 +481,38 @@ my_kernel(A=A, B=B)</code></pre>
           <li><span class="highlight">Redundant copy elim.</span> — suppression de copies inutiles</li>
         </ul>
       </div>
-      <div>
-        <div class="card">
-          <h3>Application en Python</h3>
-          <p style="font-family:var(--mono); font-size:0.55em; color:#a0d0c0;">
-            sdfg.apply_transformations(<br>
-            &nbsp;&nbsp;[MapTiling, Vectorize]<br>
-            )
-          </p>
-        </div>
-        <div class="card" style="margin-top:10px">
-          <h3>VS Code Extension</h3>
-          <p>Visualiser et appliquer les transformations interactivement via le plugin DaCe VS Code.</p>
-        </div>
-      </div>
     </div>
-    <div class="footer-line"><span>DaCe — Transformations</span><span>slide 9</span></div>
+    <div class="footer-line"><span>DaCe — Transformations</span><span>slide 7</span></div>
   </section>
 
-  <!-- SLIDE 10: PERF -->
+  <!-- SLIDE 8: PERF -->
   <section data-transition="slide">
     <span class="mono-label">résultats</span>
-    <h2>Performances comparées</h2>
+    <h2>Performances comparées en -o0</h2>
 
     <div class="perf-bar">
-      <div class="bar-label"><span>Scalaire (C)</span><span>0.065 ms/run</span></div>
+      <div class="bar-label"><span>Scalaire (C)</span><span>63 ms/run</span></div>
       <div class="bar-track"><div class="bar-fill" style="width:100%; background:linear-gradient(90deg,#3a4a5a,#4a6070);"></div></div>
     </div>
     <div class="perf-bar" style="margin-top:0.5em">
-      <div class="bar-label"><span>SIMD AVX2</span><span>0.052 ms/run</span></div>
-      <div class="bar-track"><div class="bar-fill" style="width:80%; background:linear-gradient(90deg,rgba(0,255,224,0.3),rgba(0,255,224,0.5));"></div></div>
+      <div class="bar-label"><span>SIMD AVX2</span><span>25 ms/run</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:39%; background:linear-gradient(90deg,rgba(50,255,224,0.3),rgba(238, 255, 50, 0.5));"></div></div>
     </div>
     <div class="perf-bar" style="margin-top:0.5em">
-      <div class="bar-label"><span>DaCe SDFG</span><span>0.014 ms/run</span></div>
-      <div class="bar-track"><div class="bar-fill" style="width:22%; background:linear-gradient(90deg,var(--accent),#00ccb0);"></div></div>
+      <div class="bar-label"><span>DaCe SDFG</span><span>20 ms/run</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:32%; background:linear-gradient(90deg,var(--accent),#00ccb0);"></div></div>
     </div>
 
     <div class="stats" style="margin-top:1em">
-      <div class="stat"><span class="num">4.6×</span><span class="label">plus rapide que scalaire</span></div>
-      <div class="stat"><span class="num">3.7×</span><span class="label">plus rapide que SIMD</span></div>
+      <div class="stat"><span class="num">3×</span><span class="label">plus rapide que scalaire</span></div>
+      <div class="stat"><span class="num">0.2×</span><span class="label">plus rapide que SIMD</span></div>
       <div class="stat"><span class="num">0</span><span class="label">modification manuelle du code</span></div>
     </div>
-    <div class="footer-line"><span>DaCe — Benchmarks</span><span>slide 10</span></div>
+    <div class="footer-line"><span>DaCe — Benchmarks</span><span>slide 8</span></div>
   </section>
 
 
-  <!-- SLIDE 11: CONCLUSION -->
+  <!-- SLIDE 9: CONCLUSION -->
   <section data-transition="fade">
     <span class="mono-label">conclusion</span>
     <h2>DaCe en résumé</h2>
@@ -585,16 +530,7 @@ my_kernel(A=A, B=B)</code></pre>
         <p>La <code>.so</code> générée s'intègre dans tout projet C, C++, FORTRAN ou Python existant.</p>
       </div>
     </div>
-    <div style="text-align:center; margin-top:1em;">
-      <p style="font-family:var(--mono); font-size:0.42em; color:var(--muted)">
-        github.com/spcl/dace &nbsp;·&nbsp; spcldace.readthedocs.io &nbsp;·&nbsp; ETH Zurich SPCL
-      </p>
-      <div style="display:flex; gap:10px; justify-content:center; margin-top:0.5em">
-        <span class="tag tag-accent">pip install dace</span>
-        <span class="tag tag-yellow">Apache 2.0</span>
-      </div>
-    </div>
-    <div class="footer-line"><span>DaCe — Fin</span><span>slide 11</span></div>
+    <div class="footer-line"><span>DaCe — Fin</span><span>slide 9</span></div>
   </section>
 
 </div>
