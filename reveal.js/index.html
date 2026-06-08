@@ -438,39 +438,6 @@ my_kernel(A=A, B=B)</code></pre>
     <div class="footer-line"><span>DaCe — Python API</span><span>slide 5</span></div>
   </section>
 
-  <!-- SLIDE 10: STRUCTURE CACHE -->
-  <section data-transition="slide">
-    <span class="mono-label">structure fichiers</span>
-    <h2>Le dossier <code>.dacecache</code></h2>
-    <div class="two-col">
-      <div>
-<pre style="font-size:0.48em"><code>.dacecache/
-└── my_kernel/
-    ├── program.sdfg     <span class="cm">← graphe sérialisé</span>
-    ├── src/
-    │   └── cpu/
-    │       └── my_kernel.cpp
-    ├── build/
-    │   └── libmy_kernel.so  <span class="cm">← .so finale</span>
-    ├── include/
-    │   └── my_kernel.h  <span class="cm">← header C</span>
-    └── sample/
-        └── main.c       <span class="cm">← exemple d'appel</span></code></pre>
-      </div>
-      <div>
-        <div class="card">
-          <h3>Astuce CMake</h3>
-          <p>Passer le chemin absolu de la <code>.so</code> et configurer <code>BUILD_RPATH</code> pour éviter d'avoir besoin de <code>LD_LIBRARY_PATH</code> au runtime.</p>
-        </div>
-        <div class="card" style="margin-top:10px">
-          <h3>Ordre des arguments</h3>
-          <p>DaCe ordonne les paramètres de <code>__program_*</code> <span class="highlight">alphabétiquement</span>. Toujours vérifier le header généré !</p>
-        </div>
-      </div>
-    </div>
-    <div class="footer-line"><span>DaCe — Structure</span><span>slide 6</span></div>
-  </section>
-
   <!-- SLIDE 6: INTÉGRATION C -->
   <section data-transition="slide">
     <span class="mono-label">intégration</span>
@@ -556,7 +523,6 @@ my_kernel(A=A, B=B)</code></pre>
   <section data-transition="slide">
     <span class="mono-label">résultats</span>
     <h2>Performances comparées</h2>
-    <p style="font-size:0.5em; color:var(--muted); margin-bottom:0.8em;">Exemple : kernel process_samples (N=100 000, 1000 répétitions)</p>
 
     <div class="perf-bar">
       <div class="bar-label"><span>Scalaire (C)</span><span>0.065 ms/run</span></div>
