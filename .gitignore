@@ -1,6 +1,26 @@
+# CMake
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+compile_commands.json
+
+# IDE
+.vscode/
+.idea/
+
+# Binaires
+*.o
+*.obj
+*.exe
+*.out
+*.dll
+*.so
+*.dylib
+
 __pycache__/
 *.pyc
-.vscode/
 .DS_Store
 /*.egg-info/
 
