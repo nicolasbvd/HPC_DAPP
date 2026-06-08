@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DaCe — Dataflow & Computational Graphs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/theme/black.min.css" />
+  <style>
+    :root {
+      --accent: #00ffe0;
+      --accent2: #ff4d6d;
+      --bg: #080c10;
+      --surface: #0d1520;
+      --surface2: #111c2e;
+      --text: #e8edf5;
+      --muted: #5a7080;
+      --mono: 'Space Mono', monospace;
+      --sans: 'Syne', sans-serif;
+    }
+
+    .reveal-viewport { background: var(--bg); }
+
+    .reveal {
+      font-family: var(--sans);
+      font-size: 36px;
+      color: var(--text);
+    }
+
+    /* Grid background */
+    .reveal .slides {
+      background-image:
+        linear-gradient(rgba(0,255,224,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,224,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    .reveal h1, .reveal h2, .reveal h3 {
+      font-family: var(--sans);
+      font-weight: 800;
+      text-transform: none;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      text-shadow: none;
+    }
+
+    .reveal h1 { font-size: 2.8em; line-height: 1.05; }
+    .reveal h2 { font-size: 1.6em; color: var(--accent); margin-bottom: 0.6em; }
+    .reveal h3 { font-size: 1.1em; color: var(--accent2); font-weight: 700; }
+
+    .reveal p, .reveal li { font-size: 0.72em; line-height: 1.7; color: #c5d0dc; }
+    .reveal ul { list-style: none; padding: 0; margin: 0; }
+    .reveal ul li::before { content: "→ "; color: var(--accent); font-family: var(--mono); }
+
+    .reveal code {
+      font-family: var(--mono);
+      background: var(--surface2);
+      border: 1px solid rgba(0,255,224,0.15);
+      color: var(--accent);
+      padding: 0.1em 0.4em;
+      border-radius: 3px;
+      font-size: 0.85em;
+    }
+
+    .reveal pre {
+      background: var(--surface);
+      border: 1px solid rgba(0,255,224,0.12);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1em 1.2em;
+      font-size: 0.55em;
+      line-height: 1.6;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      width: 100%;
+      margin: 0.5em auto;
+    }
+    .reveal pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: #a8d8c8;
+      font-size: 1em;
+    }
+
+    /* Tag pill */
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.45em;
+      padding: 0.3em 0.8em;
+      border-radius: 2px;
+      margin: 0 0.2em;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      vertical-align: middle;
+    }
+    .tag-accent  { background: rgba(0,255,224,0.12); color: var(--accent); border: 1px solid rgba(0,255,224,0.3); }
+    .tag-red     { background: rgba(255,77,109,0.12); color: var(--accent2); border: 1px solid rgba(255,77,109,0.3); }
+    .tag-yellow  { background: rgba(255,200,60,0.12); color: #ffc83c; border: 1px solid rgba(255,200,60,0.3); }
+
+    /* Card grid */
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 0.6em;
+    }
+    .card-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid rgba(0,255,224,0.1);
+      border-radius: 6px;
+      padding: 1em 1.1em;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+    }
+    .card h3 { margin: 0 0 0.4em; font-size: 0.65em; }
+    .card p  { margin: 0; font-size: 0.55em; color: #8a9fb0; }
+
+    /* Divider line */
+    .divider {
+      width: 60px; height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      margin: 0.4em 0 0.8em;
+      border-radius: 2px;
+    }
+
+    /* Mono label */
+    .mono-label {
+      font-family: var(--mono);
+      font-size: 0.4em;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 0.3em;
+    }
+
+    /* Title slide */
+    .title-slide { text-align: left; }
+    .title-slide .big { font-size: 3.2em; line-height: 1; margin: 0; }
+    .title-slide .big span { color: var(--accent); }
+    .title-slide .sub {
+      font-family: var(--mono);
+      font-size: 0.5em;
+      color: var(--muted);
+      margin-top: 0.8em;
+      border-left: 2px solid var(--accent);
+      padding-left: 0.8em;
+    }
+
+    /* Flow diagram */
+    .flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin: 0.8em auto;
+      flex-wrap: nowrap;
+    }
+    .flow-box {
+      background: var(--surface2);
+      border: 1px solid rgba(0,255,224,0.2);
+      border-radius: 4px;
+      padding: 0.5em 0.7em;
+      font-family: var(--mono);
+      font-size: 0.42em;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+    .flow-arrow {
+      font-family: var(--mono);
+      font-size: 0.5em;
+      color: var(--muted);
+      padding: 0 0.3em;
+    }
+
+    /* Stat box */
+    .stats { display: flex; gap: 16px; margin-top: 0.6em; justify-content: center; }
+    .stat {
+      background: var(--surface);
+      border: 1px solid rgba(0,255,224,0.1);
+      border-radius: 6px;
+      padding: 0.8em 1.2em;
+      text-align: center;
+      flex: 1;
+    }
+    .stat .num {
+      font-family: var(--mono);
+      font-size: 1.2em;
+      color: var(--accent);
+      font-weight: 700;
+      display: block;
+    }
+    .stat .label { font-size: 0.42em; color: var(--muted); }
+
+    /* Progress bar */
+    .perf-bar { margin: 0.3em 0; }
+    .perf-bar .bar-label { font-family: var(--mono); font-size: 0.42em; color: #8a9fb0; display: flex; justify-content: space-between; margin-bottom: 0.2em; }
+    .perf-bar .bar-track { background: var(--surface2); border-radius: 2px; height: 10px; overflow: hidden; }
+    .perf-bar .bar-fill   { height: 100%; border-radius: 2px; transition: width 1s ease; }
+
+    .reveal .slides section { padding: 30px 50px; }
+
+    /* Slide number */
+    .reveal .slide-number { font-family: var(--mono); color: var(--muted); background: none; font-size: 0.35em; }
+
+    /* Footer line on each slide */
+    .footer-line {
+      position: absolute;
+      bottom: 18px; left: 50px; right: 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--mono);
+      font-size: 0.32em;
+      color: var(--muted);
+      border-top: 1px solid rgba(0,255,224,0.07);
+      padding-top: 8px;
+    }
+
+    .highlight { color: var(--accent); font-weight: 700; }
+    .highlight-red { color: var(--accent2); font-weight: 700; }
+
+    /* Two-col layout */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+    .two-col.wider { grid-template-columns: 1.3fr 1fr; }
+
+    /* SDFG node diagram */
+    .sdfg-diagram {
+      background: var(--surface);
+      border: 1px solid rgba(0,255,224,0.1);
+      border-radius: 6px;
+      padding: 1em;
+      font-family: var(--mono);
+      font-size: 0.38em;
+      text-align: center;
+      margin: 0.5em 0;
+    }
+    .sdfg-state {
+      display: inline-block;
+      background: rgba(0,255,224,0.08);
+      border: 2px solid rgba(0,255,224,0.4);
+      border-radius: 50%;
+      width: 70px; height: 70px;
+      line-height: 70px;
+      color: var(--accent);
+      margin: 0 8px;
+    }
+    .sdfg-edge {
+      display: inline-block;
+      color: var(--muted);
+      vertical-align: middle;
+      font-size: 1.4em;
+      margin: 0 4px;
+    }
+
+    /* Keyword highlight in code */
+    .kw { color: #ff9f7f; }
+    .fn { color: #79d5f7; }
+    .cm { color: #4a6a5a; font-style: italic; }
+    .st { color: #f4c67a; }
+  </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+  <!-- SLIDE 1: TITLE -->
+  <section data-transition="fade">
+    <div class="title-slide">
+      <span class="mono-label">ETH Zurich · SPCL · 2019–2026</span>
+      <h1 class="big">Da<span>Ce</span></h1>
+      <div class="divider"></div>
+      <p class="sub">Data-Centric Parallel Programming<br>Optimisation de programmes via graphes de flux de données</p>
+      <div style="margin-top:1.4em; display:flex; gap:10px; flex-wrap:wrap;">
+        <span class="tag tag-accent">Python</span>
+        <span class="tag tag-red">C / C++</span>
+        <span class="tag tag-yellow">FORTRAN</span>
+        <span class="tag tag-accent">GPU / CPU / FPGA</span>
+      </div>
+    </div>
+    <div class="footer-line"><span>DaCe — Introduction</span><span>slide 1</span></div>
+  </section>
+
+  <!-- SLIDE 2: PROBLÈME -->
+  <section data-transition="slide">
+    <span class="mono-label">contexte</span>
+    <h2>Le problème de performance</h2>
+    <div class="two-col">
+      <div>
+        <ul style="margin-bottom:0.8em">
+          <li>Les programmes HPC sont complexes à optimiser</li>
+          <li>Les compilateurs classiques ont une vision locale</li>
+          <li>La mémoire est souvent le vrai goulot d'étranglement</li>
+          <li>Chaque architecture (CPU/GPU/FPGA) demande des optimisations différentes</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card">
+          <h3>Approche traditionnelle</h3>
+          <p>Écrire du code → Compiler → Profiler → Réécrire à la main pour chaque cible. Répéter indéfiniment.</p>
+        </div>
+        <div class="card" style="margin-top:12px; border-color: rgba(0,255,224,0.2);">
+          <h3 style="color:var(--accent)">Approche DaCe</h3>
+          <p>Décrire le <em>quoi</em>, pas le <em>comment</em>. Laisser DaCe générer du code optimisé pour la cible.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-line"><span>DaCe — Motivation</span><span>slide 2</span></div>
+  </section>
+
+  <!-- SLIDE 3: QU'EST-CE QUE DACE -->
+  <section data-transition="slide">
+    <span class="mono-label">définition</span>
+    <h2>Qu'est-ce que DaCe ?</h2>
+    <div class="card-grid three">
+      <div class="card">
+        <h3>Framework Python</h3>
+        <p>Annoter des fonctions Python avec <code>@dace.program</code> pour les compiler en SDFGs optimisés.</p>
+      </div>
+      <div class="card">
+        <h3>Représentation SDFG</h3>
+        <p>Stateful Dataflow multiGraph — un IR graphique qui capture explicitement les flux de données et d'état.</p>
+      </div>
+      <div class="card">
+        <h3>Multi-cible</h3>
+        <p>Génère du code natif pour CPU (OpenMP), GPU (CUDA/ROCm), et FPGA (HLS) depuis la même source.</p>
+      </div>
+    </div>
+    <div style="margin-top: 0.8em;">
+      <div class="flow">
+        <div class="flow-box">@dace.program</div>
+        <div class="flow-arrow">──▶</div>
+        <div class="flow-box">SDFG (IR)</div>
+        <div class="flow-arrow">──▶</div>
+        <div class="flow-box">Transformations</div>
+        <div class="flow-arrow">──▶</div>
+        <div class="flow-box">.so / .dll</div>
+        <div class="flow-arrow">──▶</div>
+        <div class="flow-box">C / Python / FORTRAN</div>
+      </div>
+    </div>
+    <div class="footer-line"><span>DaCe — Vue d'ensemble</span><span>slide 3</span></div>
+  </section>
+
+  <!-- SLIDE 4: SDFG -->
+  <section data-transition="slide">
+    <span class="mono-label">représentation interne</span>
+    <h2>Le SDFG</h2>
+    <div class="two-col wider">
+      <div>
+        <ul>
+          <li><span class="highlight">États</span> : nœuds du graphe externe (flot de contrôle)</li>
+          <li><span class="highlight">Dataflow</span> : graphe interne à chaque état (accès mémoire)</li>
+          <li><span class="highlight">Symboles</span> : paramètres symboliques (taille des tableaux…)</li>
+          <li><span class="highlight">Descripteurs</span> : type, forme et layout des données</li>
+          <li>Transformations applicables de façon <em>automatique</em> ou <em>manuelle</em></li>
+        </ul>
+      </div>
+      <div>
+        <div class="sdfg-diagram">
+          <div style="color:var(--muted); margin-bottom:0.6em;">États du SDFG</div>
+          <div>
+            <span class="sdfg-state">init</span>
+            <span class="sdfg-edge">→</span>
+            <span class="sdfg-state">loop</span>
+            <span class="sdfg-edge">→</span>
+            <span class="sdfg-state">exit</span>
+          </div>
+          <div style="color:var(--muted); margin-top:0.8em; font-size:0.85em;">
+            chaque état contient<br>un graphe de dataflow
+          </div>
+        </div>
+        <div class="card" style="margin-top:10px">
+          <p>Sérialisable en <code>.sdfg</code> (JSON), visualisable dans VS Code ou le web editor.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-line"><span>DaCe — SDFG IR</span><span>slide 4</span></div>
+  </section>
+
+  <!-- SLIDE 5: USAGE PYTHON -->
+  <section data-transition="slide">
+    <span class="mono-label">utilisation</span>
+    <h2>DaCe en Python</h2>
+    <div class="two-col">
+      <div>
+<pre><code><span class="kw">import</span> dace
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># Déclarer un symbole</span>
+N = dace.symbol(<span class="st">'N'</span>)
+
+<span class="cm"># Annoter la fonction</span>
+@dace.program
+<span class="kw">def</span> <span class="fn">my_kernel</span>(
+    A: dace.float64[N],
+    B: dace.float64[N]
+):
+    B[:] = A * <span class="st">2.0</span>
+
+<span class="cm"># Compiler en .so</span>
+sdfg = my_kernel.to_sdfg()
+sdfg.compile()
+
+<span class="cm"># Appel direct</span>
+A = np.ones(100)
+B = np.zeros(100)
+my_kernel(A=A, B=B)</code></pre>
+      </div>
+      <div>
+        <div class="card">
+          <h3>Compilation</h3>
+          <p>DaCe génère du C++, le compile avec le compilateur système, et produit une <code>.so</code> réutilisable.</p>
+        </div>
+        <div class="card" style="margin-top:10px">
+          <h3>Résultat dans</h3>
+          <p><code>.dacecache/my_kernel/</code><br>
+          → <code>include/my_kernel.h</code><br>
+          → <code>build/libmy_kernel.so</code><br>
+          → <code>sample/</code> exemple C</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-line"><span>DaCe — Python API</span><span>slide 5</span></div>
+  </section>
+
+  <!-- SLIDE 6: INTÉGRATION C -->
+  <section data-transition="slide">
+    <span class="mono-label">intégration</span>
+    <h2>Appeler un SDFG depuis C</h2>
+<pre><code><span class="cm">/* Header auto-généré par DaCe */</span>
+<span class="kw">#include</span> <span class="st">"my_kernel.h"</span>
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> N = 100;
+    <span class="kw">double</span> *A = malloc(N * <span class="kw">sizeof</span>(<span class="kw">double</span>));
+    <span class="kw">double</span> *B = malloc(N * <span class="kw">sizeof</span>(<span class="kw">double</span>));
+
+    <span class="cm">/* 1. Initialiser (symboles uniquement) */</span>
+    my_kernel_t handle = __dace_init_my_kernel(N);
+
+    <span class="cm">/* 2. Exécuter (handle + tableaux + symboles) */</span>
+    __program_my_kernel(handle, A, B, N);
+
+    <span class="cm">/* 3. Libérer les ressources */</span>
+    __dace_exit_my_kernel(handle);
+
+    free(A); free(B);
+    <span class="kw">return</span> 0;
+}</code></pre>
+    <div class="footer-line"><span>DaCe — Intégration C/C++</span><span>slide 6</span></div>
+  </section>
+
+  <!-- SLIDE 7: 3 FONCTIONS -->
+  <section data-transition="slide">
+    <span class="mono-label">API générée</span>
+    <h2>Les 3 fonctions exportées</h2>
+    <div class="card-grid" style="grid-template-columns:1fr;">
+      <div class="card">
+        <h3><code>__dace_init_&lt;nom&gt;(symboles…)</code></h3>
+        <p>Alloue toutes les structures internes. Ne prend que les <span class="highlight">symboles</span> (pas les tableaux). Retourne un <code>handle</code> opaque.</p>
+      </div>
+      <div class="card" style="margin-top:10px">
+        <h3><code>__program_&lt;nom&gt;(handle, args…, symboles…)</code></h3>
+        <p>Exécute le SDFG. Les arguments sont ordonnés <span class="highlight">alphabétiquement</span>. Le handle est toujours le premier argument.</p>
+      </div>
+      <div class="card" style="margin-top:10px; border-color: rgba(255,77,109,0.2);">
+        <h3 style="color:var(--accent2)"><code>__dace_exit_&lt;nom&gt;(handle)</code></h3>
+        <p>Libère toutes les ressources. Retourne <code>0</code> si succès. À appeler une fois le SDFG terminé.</p>
+      </div>
+    </div>
+    <div class="footer-line"><span>DaCe — API C</span><span>slide 7</span></div>
+  </section>
+
+  <!-- SLIDE 8: TRANSFORMATIONS -->
+  <section data-transition="slide">
+    <span class="mono-label">optimisation</span>
+    <h2>Transformations de SDFG</h2>
+    <div class="two-col">
+      <div>
+        <ul>
+          <li><span class="highlight">MapTiling</span> — découpage en tuiles cache-friendly</li>
+          <li><span class="highlight">MapFusion</span> — fusion de boucles adjacentes</li>
+          <li><span class="highlight">Vectorization</span> — génération SIMD automatique</li>
+          <li><span class="highlight">GPUTransformMap</span> — portage sur CUDA/HIP</li>
+          <li><span class="highlight">InLocalStorage</span> — promotion en registres/shared mem</li>
+          <li><span class="highlight">Redundant copy elim.</span> — suppression de copies inutiles</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card">
+          <h3>Application en Python</h3>
+          <p style="font-family:var(--mono); font-size:0.55em; color:#a0d0c0;">
+            sdfg.apply_transformations(<br>
+            &nbsp;&nbsp;[MapTiling, Vectorize]<br>
+            )
+          </p>
+        </div>
+        <div class="card" style="margin-top:10px">
+          <h3>VS Code Extension</h3>
+          <p>Visualiser et appliquer les transformations interactivement via le plugin DaCe VS Code.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-line"><span>DaCe — Transformations</span><span>slide 8</span></div>
+  </section>
+
+  <!-- SLIDE 9: PERF -->
+  <section data-transition="slide">
+    <span class="mono-label">résultats</span>
+    <h2>Performances comparées</h2>
+    <p style="font-size:0.5em; color:var(--muted); margin-bottom:0.8em;">Exemple : kernel process_samples (N=100 000, 1000 répétitions)</p>
+
+    <div class="perf-bar">
+      <div class="bar-label"><span>Scalaire (C)</span><span>0.065 ms/run</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:100%; background:linear-gradient(90deg,#3a4a5a,#4a6070);"></div></div>
+    </div>
+    <div class="perf-bar" style="margin-top:0.5em">
+      <div class="bar-label"><span>SIMD AVX2</span><span>0.052 ms/run</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:80%; background:linear-gradient(90deg,rgba(0,255,224,0.3),rgba(0,255,224,0.5));"></div></div>
+    </div>
+    <div class="perf-bar" style="margin-top:0.5em">
+      <div class="bar-label"><span>DaCe SDFG</span><span>0.014 ms/run</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:22%; background:linear-gradient(90deg,var(--accent),#00ccb0);"></div></div>
+    </div>
+
+    <div class="stats" style="margin-top:1em">
+      <div class="stat"><span class="num">4.6×</span><span class="label">plus rapide que scalaire</span></div>
+      <div class="stat"><span class="num">3.7×</span><span class="label">plus rapide que SIMD</span></div>
+      <div class="stat"><span class="num">0</span><span class="label">modification manuelle du code</span></div>
+    </div>
+    <div class="footer-line"><span>DaCe — Benchmarks</span><span>slide 9</span></div>
+  </section>
+
+  <!-- SLIDE 10: STRUCTURE CACHE -->
+  <section data-transition="slide">
+    <span class="mono-label">structure fichiers</span>
+    <h2>Le dossier <code>.dacecache</code></h2>
+    <div class="two-col">
+      <div>
+<pre style="font-size:0.48em"><code>.dacecache/
+└── my_kernel/
+    ├── program.sdfg     <span class="cm">← graphe sérialisé</span>
+    ├── src/
+    │   └── cpu/
+    │       └── my_kernel.cpp
+    ├── build/
+    │   └── libmy_kernel.so  <span class="cm">← .so finale</span>
+    ├── include/
+    │   └── my_kernel.h  <span class="cm">← header C</span>
+    └── sample/
+        └── main.c       <span class="cm">← exemple d'appel</span></code></pre>
+      </div>
+      <div>
+        <div class="card">
+          <h3>Astuce CMake</h3>
+          <p>Passer le chemin absolu de la <code>.so</code> et configurer <code>BUILD_RPATH</code> pour éviter d'avoir besoin de <code>LD_LIBRARY_PATH</code> au runtime.</p>
+        </div>
+        <div class="card" style="margin-top:10px">
+          <h3>Ordre des arguments</h3>
+          <p>DaCe ordonne les paramètres de <code>__program_*</code> <span class="highlight">alphabétiquement</span>. Toujours vérifier le header généré !</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-line"><span>DaCe — Structure</span><span>slide 10</span></div>
+  </section>
+
+  <!-- SLIDE 11: CONCLUSION -->
+  <section data-transition="fade">
+    <span class="mono-label">conclusion</span>
+    <h2>DaCe en résumé</h2>
+    <div class="card-grid three" style="margin-bottom:0.8em">
+      <div class="card">
+        <h3>Productivité</h3>
+        <p>Écrire en Python, obtenir des performances proches du métal sans réécriture manuelle.</p>
+      </div>
+      <div class="card">
+        <h3>Portabilité</h3>
+        <p>Un seul SDFG, plusieurs cibles : CPU multithread, GPU CUDA, FPGA via HLS.</p>
+      </div>
+      <div class="card">
+        <h3>Interopérabilité</h3>
+        <p>La <code>.so</code> générée s'intègre dans tout projet C, C++, FORTRAN ou Python existant.</p>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:1em;">
+      <p style="font-family:var(--mono); font-size:0.42em; color:var(--muted)">
+        github.com/spcl/dace &nbsp;·&nbsp; spcldace.readthedocs.io &nbsp;·&nbsp; ETH Zurich SPCL
+      </p>
+      <div style="display:flex; gap:10px; justify-content:center; margin-top:0.5em">
+        <span class="tag tag-accent">pip install dace</span>
+        <span class="tag tag-yellow">Apache 2.0</span>
+      </div>
+    </div>
+    <div class="footer-line"><span>DaCe — Fin</span><span>slide 11</span></div>
+  </section>
+
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: false,
+    transition: 'slide',
+    transitionSpeed: 'fast',
+    backgroundTransition: 'fade',
+    controls: true,
+    progress: true,
+    center: false,
+    width: 1200,
+    height: 700,
+    margin: 0.04,
+    plugins: []
+  });
+</script>
+</body>
+</html>
