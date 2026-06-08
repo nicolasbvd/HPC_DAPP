@@ -356,7 +356,28 @@
     <div class="footer-line"><span>DaCe — Vue d'ensemble</span><span>slide 3</span></div>
   </section>
 
-  <!-- SLIDE 4: SDFG -->
+  <!-- SLIDE 4: POURQUOI DACE -->
+  <section data-transition="slide">
+    <span class="mono-label">motivation</span>
+    <h2>Ce que DaCe apporte</h2>
+    <div class="two-col">
+      <div class="card">
+        <h3>Une représentation exploitable</h3>
+        <p>Le SDFG rend explicites les flux de données, les accès mémoire et les dépendances pour que les optimisations deviennent manipulables.</p>
+      </div>
+      <div class="card">
+        <h3>Des transformations réutilisables</h3>
+        <p>Les mêmes passes peuvent s'appliquer à plusieurs programmes et à plusieurs cibles matérielles sans repartir de zéro.</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px; border-color: rgba(0,255,224,0.2);">
+      <h3 style="color:var(--accent)">En pratique</h3>
+      <p>DaCe sert d'interface entre un code haut niveau et une optimisation proche du niveau expert, sans réécriture complète à chaque architecture.</p>
+    </div>
+    <div class="footer-line"><span>DaCe — Motivation</span><span>slide 4</span></div>
+  </section>
+
+  <!-- SLIDE 5: SDFG -->
   <section data-transition="slide">
     <span class="mono-label">représentation interne</span>
     <h2>Le SDFG</h2>
@@ -389,10 +410,10 @@
         </div>
       </div>
     </div>
-    <div class="footer-line"><span>DaCe — SDFG IR</span><span>slide 4</span></div>
+    <div class="footer-line"><span>DaCe — SDFG IR</span><span>slide 5</span></div>
   </section>
 
-  <!-- SLIDE 5: USAGE PYTHON -->
+  <!-- SLIDE 6: USAGE PYTHON -->
   <section data-transition="slide">
     <span class="mono-label">utilisation</span>
     <h2>DaCe en Python</h2>
@@ -435,10 +456,10 @@ my_kernel(A=A, B=B)</code></pre>
         </div>
       </div>
     </div>
-    <div class="footer-line"><span>DaCe — Python API</span><span>slide 5</span></div>
+    <div class="footer-line"><span>DaCe — Python API</span><span>slide 6</span></div>
   </section>
 
-  <!-- SLIDE 6: INTÉGRATION C -->
+  <!-- SLIDE 7: INTÉGRATION C -->
   <section data-transition="slide">
     <span class="mono-label">intégration</span>
     <h2>Appeler un SDFG depuis C</h2>
@@ -465,7 +486,7 @@ my_kernel(A=A, B=B)</code></pre>
     <div class="footer-line"><span>DaCe — Intégration C/C++</span><span>slide 7</span></div>
   </section>
 
-  <!-- SLIDE 7: 3 FONCTIONS -->
+  <!-- SLIDE 8: 3 FONCTIONS -->
   <section data-transition="slide">
     <span class="mono-label">API générée</span>
     <h2>Les 3 fonctions exportées</h2>
@@ -486,7 +507,7 @@ my_kernel(A=A, B=B)</code></pre>
     <div class="footer-line"><span>DaCe — API C</span><span>slide 8</span></div>
   </section>
 
-  <!-- SLIDE 8: TRANSFORMATIONS -->
+  <!-- SLIDE 9: TRANSFORMATIONS -->
   <section data-transition="slide">
     <span class="mono-label">optimisation</span>
     <h2>Transformations de SDFG</h2>
@@ -519,7 +540,7 @@ my_kernel(A=A, B=B)</code></pre>
     <div class="footer-line"><span>DaCe — Transformations</span><span>slide 9</span></div>
   </section>
 
-  <!-- SLIDE 9: PERF -->
+  <!-- SLIDE 10: PERF -->
   <section data-transition="slide">
     <span class="mono-label">résultats</span>
     <h2>Performances comparées</h2>
