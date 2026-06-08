@@ -123,6 +123,8 @@ void process_samples_SDFG(const Sample *a, size_t n, int *energy, int *score) {
     }
 
     process_samples_sdfg_run(a->x, a->y, a->z, a->bias, energy, score, (int)n);
+
+    process_samples_sdfg_exit(); 
 }
 
 void compare_arrays(const int *a, const int *b, size_t n, const char *name) {
@@ -255,6 +257,8 @@ int main(int argc, char** argv) {
     if (mode == MODE_BOTH) {
         compare_arrays(energy, energy_simd, n, "energy");
         compare_arrays(score, score_simd, n, "score");
+        compare_arrays(energy, energy_sdfg, n, "energy SDFG");
+        compare_arrays(score, score_sdfg, n, "score SDFG"); 
     }
 
     printf("n = %zu, repeats = %zu\n", n, repeats);

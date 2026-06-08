@@ -1,4 +1,4 @@
-pour o0 :
+## pour o0 :
 ```bash
  ./simd_exercice 10000000 1000
 Arrays energy match.
@@ -13,7 +13,7 @@ Per run SDFG   : 14.319000 ms
 
 ```
 
-pour o3 + flops likwid :
+## pour o3 + flops likwid :
 ```bash
 likwid-perfctr -C 2 -g HPC -m ./simd_exercice 10000000 1000
 --------------------------------------------------------------------------------
@@ -142,7 +142,7 @@ Region sequentiel, Group 1: HPC
 
 ```
 
-exec 03  + energy :
+## exec 03  + energy :
 ```bash
 likwid-perfctr -C 2 -g ENERGY -m ./simd_exercice 10000000 1000
 --------------------------------------------------------------------------------
@@ -286,7 +286,7 @@ Region SDFG, Group 1: ENERGY
 
 ```
 
-exec o0 et flops:
+## exec o0 et flops:
 ```bash
 likwid-perfctr -C 2 -g HPC -m ./simd_exercice 10000000 1000
 --------------------------------------------------------------------------------
@@ -415,7 +415,7 @@ Region sequentiel, Group 1: HPC
 
 ```
 
-exec o0 et energy :
+## exec o0 et energy :
 ```bash
 likwid-perfctr -C 2 -g ENERGY -m ./simd_exercice 10000000 1000
 --------------------------------------------------------------------------------
@@ -558,7 +558,7 @@ Region SDFG, Group 1: ENERGY
 
 ```
 
-Mono-threaded LIKWID summary (pinned to hwthread 2, `OMP_NUM_THREADS=1`):
+## Mono-threaded LIKWID summary (pinned to hwthread 2, `OMP_NUM_THREADS=1`):
 
 HPC group (`likwid-perfctr -g HPC`):
 - Normal total: ~13219 ms
@@ -574,7 +574,7 @@ ENERGY group (`likwid-perfctr -g ENERGY`):
 - Energy (package): SIMD ~214 J, SDFG ~355 J
 
 
-mono-threaded (OMP_NUM_THREADS=1, pinned to hwthread 2):
+## mono-threaded (OMP_NUM_THREADS=1, pinned to hwthread 2):
 ```bash
 Running without Marker API. Activate Marker API with -m on commandline.
 Arrays energy match.
@@ -591,7 +591,7 @@ Per run SDFG   : 21.616000 ms
 Minimum time SDFG : 20 ms
 ```
 
-topology : 
+## topology : 
 ```bash
 likwid-topology 
 --------------------------------------------------------------------------------
@@ -646,7 +646,7 @@ Total memory:		7737.37 MB
 --------------------------------------------------------------------------------
 ```
 
-baseline peakflops :
+## baseline peakflops :
 ```bash
  likwid-bench -t peakflops -W N:30kB:1 -i 100
 Allocate: Process running on hwthread 0 (Domain N) - Vector length 3750/30000 Offset 0 Alignment 512
@@ -729,7 +729,7 @@ UOPs:			11718750000
 --------------------------------------------------------------------------------
 ```
 
-perf stat :
+## perf stat :
 ```
  Performance counter stats for './simd_exercice 10000000 1000':
 
@@ -755,7 +755,7 @@ perf stat :
 
 ```
 
-perfstat scalar : 
+## perfstat scalar : 
 ```
 perf stat ./simd_exercice 10000000 1000 --scalar
 Running without Marker API. Activate Marker API with -m on commandline.
@@ -790,7 +790,7 @@ Minimum time SDFG : 10000000 ms
 
 ```
 
-perfstat sdfg :
+## perfstat sdfg :
 ```bash
  perf stat ./simd_exercice 10000000 1000 --sdfg
 Running without Marker API. Activate Marker API with -m on commandline.
@@ -826,7 +826,7 @@ Minimum time SIMD : 10000000 ms
 
 ```
 
-perfstat simd:
+## perfstat simd:
 ```bash
 perf stat ./simd_exercice 10000000 1000 --simd
 Running without Marker API. Activate Marker API with -m on commandline.
@@ -861,7 +861,7 @@ Minimum time SDFG : 10000000 ms
 
 ```
 
-march native 03 sdfg :
+## march native 03 sdfg :
 ```bash
  perf stat ./simd_exercice 10000000 1000 --sdfg
 Running without Marker API. Activate Marker API with -m on commandline.
@@ -897,7 +897,7 @@ Minimum time SIMD : 10000000 ms
 
 ```
 
-marchnative 03 simd :
+## marchnative 03 simd :
 ```bash
  perf stat ./simd_exercice 10000000 1000 --simd
 Running without Marker API. Activate Marker API with -m on commandline.
@@ -932,7 +932,7 @@ Minimum time SDFG : 10000000 ms
 
 ```
 
-march native 03 energy : 
+## march native 03 energy : 
 ```bash
 likwid-perfctr -C 2 -g ENERGY -m ./simd_exercice 10000000 1000
 --------------------------------------------------------------------------------
@@ -1072,5 +1072,48 @@ Region sequentiel, Group 1: ENERGY
 |  Energy PLATFORM [J] |          0 |
 |  Power PLATFORM [W]  |          0 |
 +----------------------+------------+
+
+```
+
+## Temps : tout 03 -march=native et sdfg qui non limiter a un thread
+```bash
+./build/simd_exercice 10000000 1000
+Running without Marker API. Activate Marker API with -m on commandline.
+Arrays energy match.
+Arrays score match.
+Arrays energy SDFG match.
+Arrays score SDFG match.
+n = 10000000, repeats = 1000
+Processing time normal total : 13369 ms
+Per run normal : 13.369000 ms
+Minimum time normal : 11 ms
+Processing time SIMD total   : 12597 ms
+Per run SIMD   : 12.597000 ms
+Minimum time SIMD : 11 ms
+Processing time SDFG total   : 13909 ms
+Per run SDFG   : 13.909000 ms
+Minimum time SDFG : 12 ms
+
+```
+
+## Temps : tout 03 -march=native sauf sdfg et sdfg qui non limiter a un thread
+
+```bash
+./build/simd_exercice 10000000 1000
+Running without Marker API. Activate Marker API with -m on commandline.
+Arrays energy match.
+Arrays score match.
+Arrays energy SDFG match.
+Arrays score SDFG match.
+n = 10000000, repeats = 1000
+Processing time normal total : 12900 ms
+Per run normal : 12.900000 ms
+Minimum time normal : 11 ms
+Processing time SIMD total   : 13133 ms
+Per run SIMD   : 13.133000 ms
+Minimum time SIMD : 12 ms
+Processing time SDFG total   : 15217 ms
+Per run SDFG   : 15.217000 ms
+Minimum time SDFG : 12 ms
 
 ```

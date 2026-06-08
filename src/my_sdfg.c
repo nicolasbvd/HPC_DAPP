@@ -1,8 +1,9 @@
 #include "my_sdfg.h"
-#include ".dacecache/process_samples_dace/include/process_samples_dace.h"
+#include "dace_api.h"
 #include <omp.h>
+#include <stddef.h>
 
-static process_samples_daceHandle_t dace_handle = nullptr;
+static process_samples_daceHandle_t dace_handle = NULL;
 static int dace_handle_N = 0;
 
 int process_samples_sdfg_init(int N) {
@@ -14,7 +15,7 @@ int process_samples_sdfg_init(int N) {
     }
     if (dace_handle) {
         __dace_exit_process_samples_dace(dace_handle);
-        dace_handle = nullptr;
+        dace_handle = NULL;
         dace_handle_N = 0;
     }
     dace_handle = __dace_init_process_samples_dace(N);
@@ -23,8 +24,8 @@ int process_samples_sdfg_init(int N) {
     }
     dace_handle_N = N;
     /* Force single-threaded execution to compare to other implementations */
-    omp_set_dynamic(0);
-    omp_set_num_threads(1);
+    //omp_set_dynamic(0);
+    //omp_set_num_threads(1);
     return 0;
 }
 
@@ -50,7 +51,7 @@ int process_samples_sdfg_exit(void) {
         return 0;
     }
     int err = __dace_exit_process_samples_dace(dace_handle);
-    dace_handle = nullptr;
+    dace_handle = NULL;
     dace_handle_N = 0;
     return err;
 }

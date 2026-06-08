@@ -1,6 +1,6 @@
 # DAPP — DaCe example and tests 
 
-Ce dépôt contient un exemple comparant trois implémentations. Cela reprend un travail réaliser lors du labo4 de HPC:
+Ce dépôt contient un exemple comparant trois implémentations. Cela reprend un travail réaliser lors du labo4 de HPC :
 - implémentation séquentielle (``normal``)
 - implémentation optimisée avec intrinsics SIMD (``SIMD``)
 - implémentation générée par DaCe (SDFG / ``process_samples_dace``)
