@@ -22,7 +22,7 @@ int process_samples_sdfg_init(int N) {
         return -1;
     }
     dace_handle_N = N;
-    /* Force single-threaded execution for OpenMP-enabled runtimes */
+    /* Force single-threaded execution to compare to other implementations */
     omp_set_dynamic(0);
     omp_set_num_threads(1);
     return 0;
